@@ -31,6 +31,9 @@ func authHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	expiresAt := time.Unix(claims.ExpiresAt, 0).UTC()
 	log.Printf("Authenticated %q (token expires at %v)\n", user.Email, expiresAt)
+	res.Header().Add("X-Authenticated-Subject", claims.Subject)
+	res.Header().Add("X-Authenticated-Email", claims.Email)
+
 	res.WriteHeader(http.StatusOK)
 	json.NewEncoder(res).Encode(user)
 }
