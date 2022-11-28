@@ -1,16 +1,8 @@
-FROM golang:latest as builder
+FROM gcr.io/distroless/static-debian11
 
-ENV CGO_ENABLED=0
-ENV GOOS=linux
-ENV GOARCH=amd64
-WORKDIR /gcp-iap-auth
-COPY . .
-RUN go build
+COPY gcp-iap-auth /
 
-# runtime image
-FROM alpine
-RUN apk add --no-cache ca-certificates
-COPY --from=builder /gcp-iap-auth/gcp-iap-auth /app
 EXPOSE 8888
 ENV GCP_IAP_AUTH_LISTEN_PORT 8888
-ENTRYPOINT ["/app"]
+
+ENTRYPOINT ["/gcp-iap-auth"]

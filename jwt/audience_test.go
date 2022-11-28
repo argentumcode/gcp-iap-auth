@@ -14,7 +14,7 @@ func TestAudiences(t *testing.T) {
 		{
 			name: "misc: not enough slashes",
 			aud:  "/projects/1234",
-			err:  fmt.Errorf("invalid audience length"),
+			err:  fmt.Errorf("audience \"/projects/1234\" must follow the format \"/projects/PROJECT_NUMBER/SERVICE_DETAILS\""),
 		},
 		{
 			name: "app engine: valid",
@@ -24,7 +24,7 @@ func TestAudiences(t *testing.T) {
 		{
 			name: "app engine: missing service details",
 			aud:  "/projects/1234/",
-			err:  fmt.Errorf("audience is missing service details"),
+			err:  fmt.Errorf("audience \"/projects/1234/\" is missing service details"),
 		},
 		{
 			name: "global: valid",
@@ -34,7 +34,7 @@ func TestAudiences(t *testing.T) {
 		{
 			name: "global: missing service details",
 			aud:  "/projects/1234/",
-			err:  fmt.Errorf("audience is missing service details"),
+			err:  fmt.Errorf("audience \"/projects/1234/\" is missing service details"),
 		},
 	}
 

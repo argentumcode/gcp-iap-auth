@@ -1,0 +1,21 @@
+env:
+  - CGO_ENABLED=0
+
+builds:
+  - main: .
+    binary: gcp-iap-auth
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.revision={{.ShortCommit}}
+
+dockers:
+  - image_templates:
+      - ghcr.io/argentumcode/gcp-iap-auth:v{{.Version}}
+    dockerfile: Dockerfile
+    build_flag_templates:
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/argentumcode/gcp-iap-auth"

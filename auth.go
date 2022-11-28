@@ -35,5 +35,7 @@ func authHandler(res http.ResponseWriter, req *http.Request) {
 	res.Header().Add("X-Authenticated-Email", claims.Email)
 
 	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(user)
+	if err := json.NewEncoder(res).Encode(user); err != nil {
+		log.Printf("Failed to write response: %v", err)
+	}
 }
