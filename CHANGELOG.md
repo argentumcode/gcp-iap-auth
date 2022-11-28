@@ -1,5 +1,21 @@
 # Changelog
 
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.0.4](https://github.com/argentumcode/gcp-iap-auth/compare/v0.0.3...v0.0.4) (2022-11-28)
+
+
+### Features
+
+* delete invalid examples ([66fa427](https://github.com/argentumcode/gcp-iap-auth/commit/66fa4276267a154b84edf4920fafdc58251b6833))
+
+
+### Bug Fixes
+
+* **deps:** switch jwt-go to golang-jwt ([7cf6412](https://github.com/argentumcode/gcp-iap-auth/commit/7cf64128e225ede89ad83675bc1a5654f0c4ca1d))
+
+# Changelog
+
 ## v0.0.3 (2017/06/08)
 
 - added: support for audiences as regexp (#3)
