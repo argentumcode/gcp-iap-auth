@@ -80,7 +80,7 @@ jobs:
           git config --global user.email 'release-bot'
           npx standard-version
           TAG="$(git tag --points-at HEAD)"
-          echo "::set-output name=version::${TAG:1}"
+          echo "version=${TAG:1}" >> $GITHUB_OUTPUT
           git diff HEAD^1 HEAD CHANGELOG.md | egrep -v '^\+\+\+' | grep -e '^\+' | sed -e 's/^\+//g' > /tmp/release-notes.txt
 
       - name: Create Release Pull Request
