@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.0...v0.1.1) (2022-11-29)
+
+
+### Features
+
+* add option to allow connection to insecure backend ([901565d](https://github.com/argentumcode/gcp-iap-auth/commit/901565d893495904f907a9edd3616a46e570f219))
+
 ### [0.1.0](https://github.com/argentumcode/gcp-iap-auth/compare/v0.0.3...v0.1.0) (2022-11-28)
 
 
