@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,15 +17,24 @@ type proxy struct {
 	proxy       *httputil.ReverseProxy
 }
 
-func newProxy(backendURL, emailHeader string) (*proxy, error) {
+func newProxy(backendURL, emailHeader string, backendInsecure bool) (*proxy, error) {
 	backend, err := url.Parse(backendURL)
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse URL '%s': %s", backendURL, err)
 	}
+	reverseProxy := httputil.NewSingleHostReverseProxy(backend)
+	if backendInsecure {
+		reverseProxy.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+	}
+
 	return &proxy{
 		backend:     backend,
 		emailHeader: emailHeader,
-		proxy:       httputil.NewSingleHostReverseProxy(backend),
+		proxy:       reverseProxy,
 	}, nil
 }
 
