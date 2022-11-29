@@ -15,15 +15,16 @@ import (
 const flagEnvPrefix = "GCP_IAP_AUTH"
 
 var (
-	cfg            = &jwt.Config{}
-	listenAddr     = flag.String("listen-addr", "0.0.0.0", "Listen address")
-	listenPort     = flag.String("listen-port", "", "Listen port (default: 80 for HTTP or 443 for HTTPS)")
-	audiences      = flag.String("audiences", "", "Comma-separated list of JWT Audiences (elements can be paths like \"/projects/PROJECT_NUMBER/apps/PROJECT_ID\" or regular expressions like \"/^\\/projects\\/PROJECT_NUMBER/.*\" if you enclose them in slashes)")
-	publicKeysPath = flag.String("public-keys", "", "Path to public keys file (optional)")
-	tlsCertPath    = flag.String("tls-cert", "", "Path to TLS server's, intermediate's and CA's PEM certificate (optional)")
-	tlsKeyPath     = flag.String("tls-key", "", "Path to TLS server's PEM key file (optional)")
-	backend        = flag.String("backend", "", "Proxy authenticated requests to the specified URL (optional)")
-	emailHeader    = flag.String("email-header", "X-WEBAUTH-USER", "In proxy mode, set the authenticated email address in the specified header")
+	cfg             = &jwt.Config{}
+	listenAddr      = flag.String("listen-addr", "0.0.0.0", "Listen address")
+	listenPort      = flag.String("listen-port", "", "Listen port (default: 80 for HTTP or 443 for HTTPS)")
+	audiences       = flag.String("audiences", "", "Comma-separated list of JWT Audiences (elements can be paths like \"/projects/PROJECT_NUMBER/apps/PROJECT_ID\" or regular expressions like \"/^\\/projects\\/PROJECT_NUMBER/.*\" if you enclose them in slashes)")
+	publicKeysPath  = flag.String("public-keys", "", "Path to public keys file (optional)")
+	tlsCertPath     = flag.String("tls-cert", "", "Path to TLS server's, intermediate's and CA's PEM certificate (optional)")
+	tlsKeyPath      = flag.String("tls-key", "", "Path to TLS server's PEM key file (optional)")
+	backend         = flag.String("backend", "", "Proxy authenticated requests to the specified URL (optional)")
+	backendInsecure = flag.Bool("backend-insecure", false, "Skip verification TLS certificate of backend (optional)")
+	emailHeader     = flag.String("email-header", "X-WEBAUTH-USER", "In proxy mode, set the authenticated email address in the specified header")
 )
 
 func initConfig() error {
