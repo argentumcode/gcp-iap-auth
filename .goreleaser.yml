@@ -12,6 +12,7 @@ builds:
 dockers:
   - image_templates:
       - ghcr.io/argentumcode/gcp-iap-auth:v{{.Version}}
+      - "{{ .Env.GCP_IAP_AUTH_INTERNAL_REPO }}:v{{.Version}}"
     dockerfile: Dockerfile
     build_flag_templates:
       - "--label=org.opencontainers.image.created={{.Date}}"
