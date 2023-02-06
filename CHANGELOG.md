@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.1...v0.1.2) (2023-02-06)
+
+
+### Features
+
+* changed Docker Image to run as a non-root user ([69f395c](https://github.com/argentumcode/gcp-iap-auth/commit/69f395c22c826a9fa6b3ae92e0d1c303d08d51d7))
+
 ### [0.1.1](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.0...v0.1.1) (2022-11-29)
 
 
