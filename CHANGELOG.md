@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.1.3](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.2...v0.1.3) (2023-02-06)
 
-### [0.1.3](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.2...v0.1.3) (2023-02-06)
+Release processing has been updated. There is no change in the program content.
 
 ### [0.1.2](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.1...v0.1.2) (2023-02-06)
 
