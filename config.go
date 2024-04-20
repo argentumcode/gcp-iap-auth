@@ -105,14 +105,17 @@ func parseRawAudience(audience string) (string, error) {
 
 func initPublicKeys(filePath string) error {
 	var err error
+	var keys map[string]jwt.PublicKey
+	cfg.PublicKeys = jwt.NewKeyStore()
 	if len(filePath) != 0 {
-		cfg.PublicKeys, err = loadPublicKeysFromFile(filePath)
+		keys, err = loadPublicKeysFromFile(filePath)
 	} else {
-		cfg.PublicKeys, err = jwt.FetchPublicKeys()
+		keys, err = jwt.FetchPublicKeys()
 	}
 	if err != nil {
 		return err
 	}
+	cfg.PublicKeys.SetMany(keys)
 	return cfg.Validate()
 }
 

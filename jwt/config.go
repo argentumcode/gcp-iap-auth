@@ -8,7 +8,7 @@ import (
 // Config specifies the parameters for which to perform validation of JWT
 // tokens in requests against.
 type Config struct {
-	PublicKeys     map[string]PublicKey
+	PublicKeys     *KeyStore
 	MatchAudiences *regexp.Regexp
 }
 
@@ -17,7 +17,7 @@ func (cfg *Config) Validate() error {
 	if cfg.MatchAudiences == nil {
 		return errors.New("No audiences to match defined")
 	}
-	if len(cfg.PublicKeys) == 0 {
+	if cfg.PublicKeys.IsEmpty() {
 		return errors.New("No public keys defined")
 	}
 	return nil
