@@ -104,26 +104,9 @@ func parseRawAudience(audience string) (string, error) {
 }
 
 func initPublicKeys(filePath string) error {
-	var err error
-	var keys map[string]jwt.PublicKey
-	cfg.PublicKeys = jwt.NewKeyStore()
-	if len(filePath) != 0 {
-		keys, err = loadPublicKeysFromFile(filePath)
-	} else {
-		keys, err = jwt.FetchPublicKeys()
-	}
-	if err != nil {
+	cfg.PublicKeys = jwt.NewKeyStore(filePath)
+	if err := cfg.PublicKeys.UpdateKeys(); err != nil {
 		return err
 	}
-	cfg.PublicKeys.SetMany(keys)
 	return cfg.Validate()
-}
-
-func loadPublicKeysFromFile(filePath string) (map[string]jwt.PublicKey, error) {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return jwt.DecodePublicKeys(f)
 }
