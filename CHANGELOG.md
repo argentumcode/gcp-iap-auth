@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.3...v0.1.4) (2024-07-06)
+
+
+### Features
+
+* Refetch pubkey if key ID is missing ([e7ce77d](https://github.com/argentumcode/gcp-iap-auth/commit/e7ce77d165ed419fda6a9c0ddec5b35008ace352)), closes [#17](https://github.com/argentumcode/gcp-iap-auth/issues/17)
+
 ### [0.1.3](https://github.com/argentumcode/gcp-iap-auth/compare/v0.1.2...v0.1.3) (2023-02-06)
 
 Release processing has been updated. There is no change in the program content.
