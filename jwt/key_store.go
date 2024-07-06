@@ -13,14 +13,16 @@ type KeyStore struct {
 	lock       sync.RWMutex
 	keys       map[string]PublicKey
 	filePath   string
+	keyURL     string
 	nextUpdate time.Time
 	updateLock sync.Mutex
 }
 
 // NewKeyStore creates a new KeyStore.
-func NewKeyStore(filepath string) *KeyStore {
+func NewKeyStore(filepath string, keyURL string) *KeyStore {
 	return &KeyStore{
 		filePath: filepath,
+		keyURL:   keyURL,
 		lock:     sync.RWMutex{},
 		keys:     make(map[string]PublicKey),
 	}
@@ -79,7 +81,7 @@ func (ks *KeyStore) UpdateKeys() error {
 	if len(ks.filePath) != 0 {
 		keys, err = loadPublicKeysFromFile(ks.filePath)
 	} else {
-		keys, err = FetchPublicKeys()
+		keys, err = FetchPublicKeys(ks.keyURL)
 	}
 	if err != nil {
 		return fmt.Errorf("load public keys: %w", err)

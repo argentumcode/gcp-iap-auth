@@ -25,6 +25,7 @@ var (
 	backend         = flag.String("backend", "", "Proxy authenticated requests to the specified URL (optional)")
 	backendInsecure = flag.Bool("backend-insecure", false, "Skip verification TLS certificate of backend (optional)")
 	emailHeader     = flag.String("email-header", "X-WEBAUTH-USER", "In proxy mode, set the authenticated email address in the specified header")
+	publicKeysUrl   = flag.String("public-keys-url", "https://www.gstatic.com/iap/verify/public_key", "URL to fetch public keys from (optional)")
 )
 
 func initConfig() error {
@@ -40,7 +41,7 @@ func initConfig() error {
 	if err := initAudiences(*audiences); err != nil {
 		return err
 	}
-	if err := initPublicKeys(*publicKeysPath); err != nil {
+	if err := initPublicKeys(*publicKeysPath, *publicKeysUrl); err != nil {
 		return err
 	}
 	return nil
@@ -103,8 +104,8 @@ func parseRawAudience(audience string) (string, error) {
 	return fmt.Sprintf("^%s$", regexp.QuoteMeta((string)(*aud))), nil
 }
 
-func initPublicKeys(filePath string) error {
-	cfg.PublicKeys = jwt.NewKeyStore(filePath)
+func initPublicKeys(filePath string, keyURL string) error {
+	cfg.PublicKeys = jwt.NewKeyStore(filePath, keyURL)
 	if err := cfg.PublicKeys.UpdateKeys(); err != nil {
 		return err
 	}
