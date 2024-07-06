@@ -6,7 +6,7 @@ import (
 )
 
 func TestKeyStore(t *testing.T) {
-	ks := NewKeyStore("")
+	ks := NewKeyStore("", "")
 
 	if !ks.IsEmpty() {
 		t.Errorf("IsEmpty failed, expected true, got false")

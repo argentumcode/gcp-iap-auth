@@ -5,62 +5,63 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/imkira/gcp-iap-auth/jwt"
-	"github.com/namsral/flag"
+	"github.com/jessevdk/go-flags"
 )
 
-const flagEnvPrefix = "GCP_IAP_AUTH"
-
-var (
-	cfg             = &jwt.Config{}
-	listenAddr      = flag.String("listen-addr", "0.0.0.0", "Listen address")
-	listenPort      = flag.String("listen-port", "", "Listen port (default: 80 for HTTP or 443 for HTTPS)")
-	audiences       = flag.String("audiences", "", "Comma-separated list of JWT Audiences (elements can be paths like \"/projects/PROJECT_NUMBER/apps/PROJECT_ID\" or regular expressions like \"/^\\/projects\\/PROJECT_NUMBER/.*\" if you enclose them in slashes)")
-	publicKeysPath  = flag.String("public-keys", "", "Path to public keys file (optional)")
-	tlsCertPath     = flag.String("tls-cert", "", "Path to TLS server's, intermediate's and CA's PEM certificate (optional)")
-	tlsKeyPath      = flag.String("tls-key", "", "Path to TLS server's PEM key file (optional)")
-	backend         = flag.String("backend", "", "Proxy authenticated requests to the specified URL (optional)")
-	backendInsecure = flag.Bool("backend-insecure", false, "Skip verification TLS certificate of backend (optional)")
-	emailHeader     = flag.String("email-header", "X-WEBAUTH-USER", "In proxy mode, set the authenticated email address in the specified header")
-)
-
-func initConfig() error {
-	flag.EnvironmentPrefix = flagEnvPrefix
-	flag.CommandLine.Init(os.Args[0], flag.ExitOnError)
-	flag.Parse()
-	if err := initServerPort(); err != nil {
-		return err
-	}
-	if len(*audiences) == 0 {
-		return errors.New("You must specify --audiences")
-	}
-	if err := initAudiences(*audiences); err != nil {
-		return err
-	}
-	if err := initPublicKeys(*publicKeysPath); err != nil {
-		return err
-	}
-	return nil
+type Options struct {
+	ListenAddr      string `long:"listen-addr" env:"GCP_IAP_AUTH_LISTEN_ADDR" description:"Listen address"`
+	ListenPort      int    `long:"listen-port" default:"-1" env:"GCP_IAP_AUTH_LISTEN_PORT" description:"Listen port (default: 80 for HTTP or 443 for HTTPS)"`
+	Audiences       string `long:"audiences" env:"GCP_IAP_AUTH_AUDIENCES" description:"Comma-separated list of JWT Audiences"`
+	PublicKeysPath  string `long:"public-keys" env:"GCP_IAP_AUTH_PUBLIC_KEYS" description:"Path to public keys file (optional)"`
+	TlsCertPath     string `long:"tls-cert" env:"GCP_IAP_AUTH_TLS_CERT" description:"Path to TLS server's, intermediate's and CA's PEM certificate (optional)"`
+	TlsKeyPath      string `long:"tls-key" env:"GCP_IAP_AUTH_TLS_KEY" description:"Path to TLS server's PEM key file (optional)"`
+	Backend         string `long:"backend" env:"GCP_IAP_AUTH_BACKEND" description:"Proxy authenticated requests to the specified URL (optional)"`
+	BackendInsecure bool   `long:"backend-insecure" env:"GCP_IAP_AUTH_BACKEND_INSECURE" description:"Skip verification TLS certificate of backend (optional)"`
+	EmailHeader     string `long:"email-header" env:"GCP_IAP_AUTH_EMAIL_HEADER" default:"X-WEBAUTH-USER" description:"In proxy mode, set the authenticated email address in the specified header"`
+	PublicKeysUrl   string `long:"public-keys-url" env:"GCP_IAP_AUTH_PUBLIC_KEYS_URL" default:"https://www.gstatic.com/iap/verify/public_key" description:"URL to fetch public keys from (optional)"`
 }
 
-func initServerPort() error {
-	if len(*listenPort) == 0 {
-		if len(*tlsCertPath) != 0 || len(*tlsKeyPath) != 0 {
-			*listenPort = "443"
+func initConfigByArgs(args []string) (*jwt.Config, *Options, error) {
+	opts := &Options{}
+	args, err := flags.NewParser(opts, flags.HelpFlag|flags.PassDoubleDash).ParseArgs(args)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(args) > 0 {
+		return nil, nil, errors.New("extra arguments found")
+	}
+	opts.initServerPort()
+	if opts.Audiences == "" {
+		return nil, nil, errors.New("you must specify --audiences")
+	}
+	cfg := &jwt.Config{}
+	if err := initAudiences(cfg, opts.Audiences); err != nil {
+		return nil, nil, err
+	}
+	if err := initPublicKeys(cfg, opts.PublicKeysPath, opts.PublicKeysUrl); err != nil {
+		return nil, nil, err
+	}
+	return cfg, opts, nil
+}
+
+func initConfig() (*jwt.Config, *Options, error) {
+	return initConfigByArgs(os.Args[1:])
+}
+
+func (o *Options) initServerPort() {
+	if o.ListenPort == -1 {
+		if o.TlsCertPath != "" || o.TlsKeyPath != "" {
+			o.ListenPort = 443
 		} else {
-			*listenPort = "80"
+			o.ListenPort = 80
 		}
 	}
-	if _, err := strconv.Atoi(*listenPort); err != nil {
-		return fmt.Errorf("Invalid listen port %q", *listenPort)
-	}
-	return nil
 }
 
-func initAudiences(audiences string) error {
+func initAudiences(cfg *jwt.Config, audiences string) error {
 	str, err := extractAudiencesRegexp(audiences)
 	if err != nil {
 		return err
@@ -103,8 +104,8 @@ func parseRawAudience(audience string) (string, error) {
 	return fmt.Sprintf("^%s$", regexp.QuoteMeta((string)(*aud))), nil
 }
 
-func initPublicKeys(filePath string) error {
-	cfg.PublicKeys = jwt.NewKeyStore(filePath)
+func initPublicKeys(cfg *jwt.Config, filePath string, keyURL string) error {
+	cfg.PublicKeys = jwt.NewKeyStore(filePath, keyURL)
 	if err := cfg.PublicKeys.UpdateKeys(); err != nil {
 		return err
 	}

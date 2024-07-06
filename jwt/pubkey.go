@@ -8,8 +8,6 @@ import (
 )
 
 var (
-	// PublicKeysURL is the URL from which public keys will be fetched.
-	PublicKeysURL = "https://www.gstatic.com/iap/verify/public_key"
 	// HTTPClient is the default HTTP Client to use for fetching public keys.
 	HTTPClient = &http.Client{Timeout: 10 * time.Second}
 )
@@ -38,8 +36,8 @@ func DecodePublicKeys(r io.Reader) (map[string]PublicKey, error) {
 }
 
 // FetchPublicKeys downloads and decodes all public keys from Google.
-func FetchPublicKeys() (map[string]PublicKey, error) {
-	r, err := HTTPClient.Get(PublicKeysURL)
+func FetchPublicKeys(keyURL string) (map[string]PublicKey, error) {
+	r, err := HTTPClient.Get(keyURL)
 	if err != nil {
 		return nil, err
 	}
