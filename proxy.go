@@ -15,9 +15,10 @@ type proxy struct {
 	backend     *url.URL
 	emailHeader string
 	proxy       *httputil.ReverseProxy
+	cfg         *jwt.Config
 }
 
-func newProxy(backendURL, emailHeader string, backendInsecure bool) (*proxy, error) {
+func newProxy(cfg *jwt.Config, backendURL, emailHeader string, backendInsecure bool) (*proxy, error) {
 	backend, err := url.Parse(backendURL)
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse URL '%s': %s", backendURL, err)
@@ -35,11 +36,12 @@ func newProxy(backendURL, emailHeader string, backendInsecure bool) (*proxy, err
 		backend:     backend,
 		emailHeader: emailHeader,
 		proxy:       reverseProxy,
+		cfg:         cfg,
 	}, nil
 }
 
 func (p *proxy) handler(res http.ResponseWriter, req *http.Request) {
-	claims, err := jwt.RequestClaims(req, cfg)
+	claims, err := jwt.RequestClaims(req, p.cfg)
 	if err != nil {
 		if claims == nil || len(claims.Email) == 0 {
 			log.Printf("Failed to authenticate (%v)\n", err)
