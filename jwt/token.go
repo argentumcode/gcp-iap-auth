@@ -19,7 +19,7 @@ func tokenKey(token *jwt.Token) (interface{}, error) {
 		return nil, fmt.Errorf("Invalid algorithm: %v", token.Header[algorithmClaim])
 	}
 	keyID, _ := token.Header[keyIDClaim].(string)
-	key := token.Claims.(*Claims).cfg.PublicKeys[keyID]
+	key := token.Claims.(*Claims).cfg.PublicKeys.GetKey(keyID)
 	if len(key) == 0 {
 		return nil, fmt.Errorf("No public key for %q", keyID)
 	}

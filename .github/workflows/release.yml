@@ -28,23 +28,24 @@ jobs:
       - release-prepare
     if: ${{ needs.release-prepare.outputs.result == 'release' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v1'
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
         with:
           credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT_JSON_B64 }}"
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
 
       - name: configure docker
         run: gcloud auth configure-docker asia-northeast1-docker.pkg.dev
 
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
-          go-version: "1.19"
+          go-version-file: "go.mod"
+          cache: true
 
       - name: Prepare Release
         run: |
@@ -77,13 +78,13 @@ jobs:
       - release-prepare
     if: ${{ needs.release-prepare.outputs.result == 'prepare' }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "20"
 
       - name: Prepare Release Notes
         id: release_notes
